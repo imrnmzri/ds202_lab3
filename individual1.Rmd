@@ -84,10 +84,10 @@ newdat %>%
   select(happy, marital) %>%
   filter(happy %in% c("Not too happy", "Pretty happy", "Very happy")) %>%
   drop_na() %>%
-  ggplot(aes(x=marital, fill=happy)) + geom_bar(position='dodge') + labs(title="Total Happiness with each marital status", x="Marital Status", fill="Happiness")
+  ggplot(aes(x=marital, fill=happy)) + geom_bar(position='fill') + labs(title="Total Happiness with each marital status", x="Marital Status", fill="Happiness")
 ```
 
-Answer: Using Very Happy and Pretty Happy, it can be found that Married respondents are the most happiest, with separated the lowest that is happy.Using all the happiness per marital status, it can be seen that all marital status have Pretty happy as their highest happiness status. Married respondents are also the ones that have the most not too happy answers.
+Answer: Using Very Happy and Pretty Happy, it can be found that Married respondents are the most happiest, with separated the lowest that is happy.Using all the happiness per marital status, it can be seen that married respondents have a much higher rate of "very happy" respondents compared to other marital status. Separated respondents have a much higher rate of "Not too happy" compared to other marital status.
 
 4. Does party affiliation affect the relationship you found in the last question?
 
@@ -104,10 +104,10 @@ newdat %>%
   select(happy, marital, partyid) %>%
   filter(happy %in% c("Not too happy", "Pretty happy", "Very happy")) %>%
   drop_na() %>%
-  ggplot(aes(x=marital, fill=happy)) + geom_bar(position='stack') + labs(fill="Happiness") + facet_wrap(~partyid) + coord_flip()
+  ggplot(aes(x=marital, fill=happy)) + geom_bar(position='stack') + labs(fill="Happiness", x="Marital Status") + facet_wrap(~partyid) + coord_flip()
 ```
 
-Answer: Not really, all of the party affiliations have a very high happiness for married respondents. Happy, Married respondents are the highest and have an affilliation for not strong democrat.
+Answer: All of the party affiliations have a very high happiness for married respondents. Happy, Married respondents are the highest and have an affilliation for not strong democrat, followed closely by not strong republicans. However, Not too happy respondents are much more higher in not strong democrat compared to not strong republican. 
 
 5. How is marrital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
 ```{r message=FALSE, warning=FALSE}
@@ -125,4 +125,4 @@ newdat %>%
   ggplot(aes(marital, educ, fill=marital)) + geom_boxplot() + labs(title="Education Level with Marital Status", x="Marital Status", y="Education Level")
 ```
 
-Answer: While never married has the highest average education level and highest median, if we use boxplot, it can be seen that married respondents actually have a similar distribution of education level with never married respondents. While never married has a similar median of education level with divorced, never married has a much higher 25% quartile compared to divorced, which means that never married respondents have a much higher range of education level than divorced
+Answer: While never married has the highest average education level and highest median, if we use boxplot, it can be seen that married respondents actually have a similar distribution of education level with never married respondents. While never married has a similar median of education level with divorced, never married has a much higher 25% quartile compared to divorced, which means that never married respondents have a much higher range of education level than divorced, which is highly concentrated around level 12 to 15
