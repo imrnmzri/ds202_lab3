@@ -9,14 +9,14 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Data reading and cleaning. Use GSS and GSS2
+Data reading and cleaning. Use GSS and GSS2. I think we should try to combine this
 ```{r message=FALSE, warning=FALSE}
 library(readxl)
 library(ggplot2)
 library(tidyverse)
 library(dplyr)
-dat <- readxl::read_xls('GSS.xls')
-newdat <- dat %>%
+datum <- readxl::read_xls('GSS.xls')
+newdat <- datum %>%
   rename(year=`Gss year for this respondent`, 
          marital=`Marital status`, 
          educ=`Highest year of school completed`, 
@@ -24,7 +24,10 @@ newdat <- dat %>%
          partyid=`Political party affiliation`, 
          happy=`General happiness`, 
          ballot=`Ballot used for interview`, 
-         id=`Respondent id number`) %>%
+         id=`Respondent id number`,
+         conpress=`Confidence in press`,
+         bills=`Income alone is enough`,
+         qlife=`R's quality of life`) %>%
   filter(!educ %in% c("No answer", "Don't know")) %>%
   filter(!marital %in% c("No answer")) %>%
   filter(!partyid %in% c("No answer", "Don't know"))
@@ -137,6 +140,14 @@ Answer: Not really, all of the party affiliations have a very high happiness for
 5. How is marital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
 
 6. Explore two more interesting questions, and answer those questions using the GSS data.
-```{r message=FALSE, warning=FALSE}
 
+Question 1: How do party affilliation affects their confidence towards the press, with each sex?
+```{r message=FALSE, warning=FALSE}
+newdat %>%
+  select(sex, conpress, partyid) %>%
+  filter(!conpress %in% c("Not applicable", "No answer")) %>%
+  drop_na() %>%
+  ggplot(aes(x=partyid, fill=conpress)) + geom_bar(position='dodge') + labs(title="Confidence in press with Party Affilliation", x="Party Affilliation", fill="Press Confidence") + facet_wrap(~sex) + coord_flip()
 ```
+
+Answer: We can see that almost all of the party affilliation has only some confidence towards the press, but for "Strong Republican" respondents, they are really interesting. Male strong republicans are mostly do not feel confident with the press, while female strong republicans are very close between believing only some press and believing hardly any press. This means that strong republican respondents don't really trust the current news.
