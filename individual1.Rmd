@@ -9,22 +9,110 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+```{r}
+library(readxl)
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+dat <- readxl::read_xls('GSS.xls')
+newdat <- dat %>%
+  rename(year=`Gss year for this respondent`, 
+         marital=`Marital status`, 
+         educ=`Highest year of school completed`, 
+         sex=`Respondents sex`, 
+         partyid=`Political party affiliation`, 
+         happy=`General happiness`, 
+         ballot=`Ballot used for interview`, 
+         id=`Respondent id number`) %>%
+  filter(!educ %in% c("No answer", "Don't know")) %>%
+  filter(!marital %in% c("No answer")) %>%
+  filter(!partyid %in% c("No answer", "Don't know"))
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+str(newdat)
 ```
 
-## Including Plots
+1. Find the average years of education for the respondents with each political party affiliation. Arrange your output in a meaningful order and print. Describe any patterns you find.
+```{r}
+edparty <- newdat %>%
+  mutate(educ=as.numeric(educ)) %>%
+  select(educ, partyid) %>%
+  group_by(partyid) %>%
+  drop_na() %>%
+  summarise(avedu=mean(educ), .groups='drop')
 
-You can also embed plots, for example:
+edparty
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+ggplot(edparty, aes(x=reorder(partyid,avedu), weight=avedu)) + geom_bar() + coord_flip()
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+2. Create a single data frame containing records for the better educated respondents in each political party affiliation. A “better educated” respondent is someone who has strictly more years of education than the median in the same party affiliation. Print the structure of the data frame.
+```{r}
+df1 <- newdat %>%
+  mutate(educ=as.numeric(educ)) %>%
+  group_by(partyid) %>%
+  mutate(median_educ=median(educ, na.rm = TRUE)) %>%
+  filter(educ>median_educ) %>%
+  ungroup()
+
+str(df1)
+```
+
+For each of the investigation below, create at least one numerical summary and one appropriate visualization. Write a paragraph to describe your findings and the variables you used.
+
+3. How is the happiness of a respondent related to his/her marriage status? Define that a person is happy if the response to question is “Very happy” or “Pretty happy”.
+```{r}
+hap <- newdat %>%
+  filter(happy %in% c("Pretty happy", "Very happy")) %>%
+  select(happy, marital) %>%
+  group_by(marital) %>%
+  summarise(nHappy=n()) %>%
+  arrange(nHappy)
+
+hap
+
+ggplot(hap, aes(x=reorder(marital,nHappy), weight=nHappy)) + geom_bar() + coord_flip()
+
+newdat %>%
+  select(happy, marital) %>%
+  filter(happy %in% c("Not too happy", "Pretty happy", "Very happy")) %>%
+  drop_na() %>%
+  ggplot(aes(x=marital, fill=happy)) + geom_bar(position='dodge') + labs(fill="Happiness")
+```
+
+4. Does party affiliation affect the relationship you found in the last question?
+```{r}
+newdat %>%
+  select(happy, marital, partyid) %>%
+  filter(happy %in% c("Pretty happy", "Very happy")) %>%
+  drop_na() %>%
+  group_by(marital, partyid) %>%
+  summarise(nHappy=n()) %>%
+  arrange(desc(nHappy))
+
+newdat %>%
+  select(happy, marital, partyid) %>%
+  filter(happy %in% c("Not too happy", "Pretty happy", "Very happy")) %>%
+  drop_na() %>%
+  ggplot(aes(x=marital, fill=happy)) + geom_bar(position='stack') + labs(fill="Happiness") + facet_wrap(~partyid) + coord_flip()
+```
+
+5. How is marrital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
+```{r}
+newdat %>%
+  select(marital, educ) %>%
+  mutate(educ=as.numeric(educ)) %>%
+  group_by(marital) %>%
+  drop_na() %>%
+  summarise(mean_edu=mean(educ), med_edu=median(educ), .groups='drop')
+
+newdat %>%
+  select(marital, educ) %>%
+  mutate(educ=as.numeric(educ)) %>%
+  drop_na() %>%
+  ggplot(aes(marital, educ, fill=marital)) + geom_boxplot()
+```
+
+6. Explore two more interesting questions, and answer those questions using the GSS data.
+```{r}
+
+```
