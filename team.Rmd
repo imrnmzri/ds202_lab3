@@ -70,12 +70,17 @@ POP<-c(AVGIndneadem,AVGIndnearrep,AVGNotstrdemocrat,AVGNotstrrepublican,AVGStron
 names(POP)<-c('Independent near democrat','Independent near republican','Not strong democrat','Not strong republican','Strong democrat','Strong republican','Independent','Other')
 POP
 ```
-
+    
+    The output shows the average years of education for each political party affiliation. From the output, in general, we can see Republicans at all levels are better educated than Democrats at the same level. And individuals' education level is a little lower than these two affiliation.
+    
 2. Create a single data frame containing records for the better educated respondents in each political party affiliation. A “better educated” respondent is someone who has strictly more years of education than the median in the same party affiliation. Print the structure of the data frame.
 
 For each of the investigation below, create at least one numerical summary and one appropriate visualization. Write a paragraph to describe your findings and the variables you used.
 
 3. How is the happiness of a respondent related to his/her marriage status? Define that a person is happy if the response to question is “Very happy” or “Pretty happy”.
+```{r echo=FALSE}
+
+```
 
 4. Does party affiliation affect the relationship you found in the last question?
 
