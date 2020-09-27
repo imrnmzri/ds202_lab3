@@ -9,22 +9,76 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Exploration
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Use ggplot2 to create the plots, and dplyr to manipulate the data frame as much as possible. You may want to rename the columns of the data frame for your convenience using rename in dplyr.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+1. Find the average years of education for the respondents with each political party affiliation. Arrange your output in a meaningful order and print. Describe any patterns you find.
+```{r echo = FALSE, message=FALSE, warning=FALSE}
+dat <- readxl::read_xls('C:/Users/dongm/OneDrive/Desktop/New folder (2)/GSS.xls')
+library(dplyr)
+dat1<- select(dat, 'Highest year of school completed', 'Political party affiliation')
+Indneadem<-dat1[dat1$`Political party affiliation`=='Ind,near dem',]
+Indneadem<-Indneadem[!(Indneadem$`Highest year of school completed`== 'No answer'),]
+Indneadem<-Indneadem[!(Indneadem$`Highest year of school completed`== "Don't know"),]
+Indneadem<-Indneadem[rowSums(is.na(Indneadem))!=ncol(Indneadem),]
+EDU<-as.numeric(Indneadem$`Highest year of school completed`)
+AVGIndneadem<-mean(EDU)
+Indnearrep<-dat1[dat1$`Political party affiliation`=='Ind,near rep',]
+Indnearrep<-Indnearrep[!(Indnearrep$`Highest year of school completed`== 'No answer'),]
+Indnearrep<-Indnearrep[!(Indnearrep$`Highest year of school completed`== "Don't know"),]
+Indnearrep<-Indnearrep[rowSums(is.na(Indnearrep))!=ncol(Indnearrep),]
+EDU2<-as.numeric(Indnearrep$`Highest year of school completed`)
+AVGIndnearrep<-mean(EDU2)
+INDEPENDENT<-dat1[dat1$`Political party affiliation`=='Independent',]
+INDEPENDENT<-INDEPENDENT[!(INDEPENDENT$`Highest year of school completed`== 'No answer'),]
+INDEPENDENT<-INDEPENDENT[!(INDEPENDENT$`Highest year of school completed`== "Don't know"),]
+INDEPENDENT<-INDEPENDENT[rowSums(is.na(INDEPENDENT))!=ncol(INDEPENDENT),]
+EDU3<-as.numeric(INDEPENDENT$`Highest year of school completed`)
+AVGINDEPENDENT<-mean(EDU3)
+Notstrdemocrat<-dat1[dat1$`Political party affiliation`=='Not str democrat',]
+Notstrdemocrat<-Notstrdemocrat[!(Notstrdemocrat$`Highest year of school completed`== 'No answer'),]
+Notstrdemocrat<-Notstrdemocrat[!(Notstrdemocrat$`Highest year of school completed`== "Don't know"),]
+Notstrdemocrat<-Notstrdemocrat[rowSums(is.na(Notstrdemocrat))!=ncol(Notstrdemocrat),]
+EDU4<-as.numeric(Notstrdemocrat$`Highest year of school completed`)
+AVGNotstrdemocrat<-mean(EDU4)
+Notstrrepublican<-dat1[dat1$`Political party affiliation`=='Not str republican',]
+Notstrrepublican<-Notstrrepublican[!(Notstrrepublican$`Highest year of school completed`== 'No answer'),]
+Notstrrepublican<-Notstrrepublican[!(Notstrrepublican$`Highest year of school completed`== "Don't know"),]
+Notstrrepublican<-Notstrrepublican[rowSums(is.na(Notstrrepublican))!=ncol(Notstrrepublican),]
+EDU5<-as.numeric(Notstrrepublican$`Highest year of school completed`)
+AVGNotstrrepublican<-mean(EDU5)
+Strongdemocrat<-dat1[dat1$`Political party affiliation`=='Strong democrat',]
+Strongdemocrat<-Strongdemocrat[!(Strongdemocrat$`Highest year of school completed`== 'No answer'),]
+Strongdemocrat<-Strongdemocrat[!(Strongdemocrat$`Highest year of school completed`== "Don't know"),]
+Strongdemocrat<-Strongdemocrat[rowSums(is.na(Strongdemocrat))!=ncol(Strongdemocrat),]
+EDU6<-as.numeric(Strongdemocrat$`Highest year of school completed`)
+AVGStrongdemocrat<-mean(EDU6)
+Strongrepublican<-dat1[dat1$`Political party affiliation`=='Strong republican',]
+Strongrepublican<-Strongrepublican[!(Strongrepublican$`Highest year of school completed`== 'No answer'),]
+Strongrepublican<-Strongrepublican[!(Strongrepublican$`Highest year of school completed`== "Don't know"),]
+Strongrepublican<-Strongrepublican[rowSums(is.na(Strongrepublican))!=ncol(Strongrepublican),]
+EDU7<-as.numeric(Strongrepublican$`Highest year of school completed`)
+AVGStrongrepublican<-mean(EDU7)
+Otherparty<-dat1[dat1$`Political party affiliation`=='Other party',]
+Otherparty<-Otherparty[!(Otherparty$`Highest year of school completed`== 'No answer'),]
+Otherparty<-Otherparty[!(Otherparty$`Highest year of school completed`== "Don't know"),]
+Otherparty<-Otherparty[rowSums(is.na(Otherparty))!=ncol(Otherparty),]
+EDU8<-as.numeric(Otherparty$`Highest year of school completed`)
+AVGOtherparty<-mean(EDU8)
+POP<-c(AVGIndneadem,AVGIndnearrep,AVGNotstrdemocrat,AVGNotstrrepublican,AVGStrongdemocrat,AVGStrongrepublican,AVGINDEPENDENT,AVGOtherparty)
+names(POP)<-c('Independent near democrat','Independent near republican','Not strong democrat','Not strong republican','Strong democrat','Strong republican','Independent','Other')
+POP
 ```
 
-## Including Plots
+2. Create a single data frame containing records for the better educated respondents in each political party affiliation. A “better educated” respondent is someone who has strictly more years of education than the median in the same party affiliation. Print the structure of the data frame.
 
-You can also embed plots, for example:
+For each of the investigation below, create at least one numerical summary and one appropriate visualization. Write a paragraph to describe your findings and the variables you used.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+3. How is the happiness of a respondent related to his/her marriage status? Define that a person is happy if the response to question is “Very happy” or “Pretty happy”.
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+4. Does party affiliation affect the relationship you found in the last question?
+
+5. How is marital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
+
+6. Explore two more interesting questions, and answer those questions using the GSS data.
