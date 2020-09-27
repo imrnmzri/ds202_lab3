@@ -15,7 +15,7 @@ Use ggplot2 to create the plots, and dplyr to manipulate the data frame as much 
 
 1. Find the average years of education for the respondents with each political party affiliation. Arrange your output in a meaningful order and print. Describe any patterns you find.
 ```{r echo = FALSE, message=FALSE, warning=FALSE}
-dat <- readxl::read_xls('C:/Users/dongm/OneDrive/Desktop/New folder (2)/GSS.xls')
+dat <- readxl::read_xls('GSS2.xls')
 library(dplyr)
 dat1<- select(dat, 'Highest year of school completed', 'Political party affiliation')
 Indneadem<-dat1[dat1$`Political party affiliation`=='Ind,near dem',]
