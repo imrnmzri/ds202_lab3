@@ -111,10 +111,10 @@ newdat %>%
   select(happy, marital, partyid) %>%
   filter(happy %in% c("Not too happy", "Pretty happy", "Very happy")) %>%
   drop_na() %>%
-  ggplot(aes(x=marital, fill=happy)) + geom_bar(position='stack') + labs(fill="Happiness") + facet_wrap(~partyid) + coord_flip()
+  ggplot(aes(x=marital, fill=happy)) + geom_bar(position='stack') + labs(fill="Happiness", x="Marital Status") + facet_wrap(~partyid) + coord_flip()
 ```
 
-Answer: Not really, all of the party affiliations have a very high happiness for married respondents. Happy, Married respondents are the highest and have an affilliation for not strong democrat.
+Answer: All of the party affiliations have a very high happiness for married respondents. Happy, Married respondents are the highest and have an affilliation for not strong democrat, followed closely by not strong republicans. However, Not too happy respondents are much more higher in not strong democrat compared to not strong republican. Many unhappy married respondents are affilliated more towards not strong democrat rather than not strong republican.
 
 5. How is marital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
 
@@ -135,12 +135,12 @@ Question 1: How do party affilliation affects their confidence towards the press
 ```{r message=FALSE, warning=FALSE}
 newdat %>%
   select(sex, conpress, partyid) %>%
-  filter(!conpress %in% c("Not applicable", "No answer")) %>%
+  filter(!conpress %in% c("Not applicable", "No answer", "Don't know")) %>%
   drop_na() %>%
   ggplot(aes(x=partyid, fill=conpress)) + geom_bar(position='dodge') + labs(title="Confidence in press with Party Affilliation", x="Party Affilliation", fill="Press Confidence") + facet_wrap(~sex) + coord_flip()
 ```
 
-Answer: We can see that almost all of the party affilliation has only some confidence towards the press, but for "Strong Republican" respondents, they are really interesting. Male strong republicans are mostly do not feel confident with the press, while female strong republicans are very close between believing only some press and believing hardly any press. This means that strong republican respondents don't really trust the current news.
+Answer: We can see that almost all of the party affilliation has only some confidence towards the press, but for "Strong Republican" respondents, they are really interesting. Male strong republicans are mostly do not feel confident with the press, while female strong republicans are very close between believing only some press and believing hardly any press. This means that strong republican respondents don't really trust the current news. This is also similar for the Other Party respondents.
 >>>>>>> f27d0524b539aaefedc368b2541007323a22c5c0
 
 Question 2: What is the relationship between respondents' total family income and their happiness?
