@@ -6,7 +6,26 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
+```
+```{r}
+library(readxl)
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+dat <- readxl::read_xls('GSS.xls')
+newdat <- dat %>%
+  rename(year=`Gss year for this respondent`, 
+         marital=`Marital status`, 
+         educ=`Highest year of school completed`, 
+         sex=`Respondents sex`, 
+         partyid=`Political party affiliation`, 
+         happy=`General happiness`, 
+         ballot=`Ballot used for interview`, 
+         id=`Respondent id number`) %>%
+  filter(!educ %in% c("No answer", "Don't know")) %>%
+  filter(!marital %in% c("No answer")) %>%
+  filter(!partyid %in% c("No answer", "Don't know"))
 ```
 
 ## Exploration
@@ -77,8 +96,30 @@ For each of the investigation below, create at least one numerical summary and o
 
 3. How is the happiness of a respondent related to his/her marriage status? Define that a person is happy if the response to question is “Very happy” or “Pretty happy”.
 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+Happiness<-select(dat1,happy,marital)
+Happiness<-group_by(Happiness,marital)
+Happiness<-drop_na(Happiness) 
+summarise(Happiness,CountHappy=n())
+Happiness%>%ggplot(aes(x=marital, fill=happy)) + geom_bar(position='dodge')
+```
+
 4. Does party affiliation affect the relationship you found in the last question?
 
 5. How is marital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
+```{r}
+dat1 %>%
+  select(marital, educ) %>%
+  mutate(educ=as.numeric(educ)) %>%
+  group_by(marital) %>%
+  drop_na() %>%
+  summarise(mean_edu=mean(educ), med_edu=median(educ), .groups='drop')
+dat1 %>%
+  select(marital, educ) %>%
+  mutate(educ=as.numeric(educ)) %>%
+  drop_na() %>%
+  ggplot(aes(marital, educ, fill=marital)) + geom_point()
+```
 
 6. Explore two more interesting questions, and answer those questions using the GSS data.
