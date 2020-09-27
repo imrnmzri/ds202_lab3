@@ -9,7 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+Reading and cleaning data
+```{r message=FALSE, warning=FALSE}
 library(readxl)
 library(ggplot2)
 library(tidyverse)
@@ -32,21 +33,25 @@ str(newdat)
 ```
 
 1. Find the average years of education for the respondents with each political party affiliation. Arrange your output in a meaningful order and print. Describe any patterns you find.
-```{r}
+```{r message=FALSE, warning=FALSE}
 edparty <- newdat %>%
   mutate(educ=as.numeric(educ)) %>%
   select(educ, partyid) %>%
   group_by(partyid) %>%
   drop_na() %>%
-  summarise(avedu=mean(educ), .groups='drop')
+  summarise(mean_edu=mean(educ), .groups='drop') %>%
+  arrange(desc(mean_edu))
 
 edparty
 
-ggplot(edparty, aes(x=reorder(partyid,avedu), weight=avedu)) + geom_bar() + coord_flip()
+ggplot(edparty, aes(x=reorder(partyid,mean_edu), weight=mean_edu)) + geom_bar() + coord_flip() + labs(title="Average Years of Education for each Party Affilliation", x="Party Affilliation", y="Average Years of Education")
 ```
 
+Answer: The average years of education are highest for two party affiliation;
+Strong Republican and Other Party, with an average of 13.4. The least average years of education are Independent, with an average of 12.3
+
 2. Create a single data frame containing records for the better educated respondents in each political party affiliation. A “better educated” respondent is someone who has strictly more years of education than the median in the same party affiliation. Print the structure of the data frame.
-```{r}
+```{r message=FALSE, warning=FALSE}
 df1 <- newdat %>%
   mutate(educ=as.numeric(educ)) %>%
   group_by(partyid) %>%
@@ -60,7 +65,7 @@ str(df1)
 For each of the investigation below, create at least one numerical summary and one appropriate visualization. Write a paragraph to describe your findings and the variables you used.
 
 3. How is the happiness of a respondent related to his/her marriage status? Define that a person is happy if the response to question is “Very happy” or “Pretty happy”.
-```{r}
+```{r message=FALSE, warning=FALSE}
 hap <- newdat %>%
   filter(happy %in% c("Pretty happy", "Very happy")) %>%
   select(happy, marital) %>%
@@ -70,17 +75,20 @@ hap <- newdat %>%
 
 hap
 
-ggplot(hap, aes(x=reorder(marital,nHappy), weight=nHappy)) + geom_bar() + coord_flip()
+ggplot(hap, aes(x=reorder(marital,nHappy), weight=nHappy)) + geom_bar() + coord_flip() + labs(title="Total Happy respondents per marital status", x="Marital status")
 
 newdat %>%
   select(happy, marital) %>%
   filter(happy %in% c("Not too happy", "Pretty happy", "Very happy")) %>%
   drop_na() %>%
-  ggplot(aes(x=marital, fill=happy)) + geom_bar(position='dodge') + labs(fill="Happiness")
+  ggplot(aes(x=marital, fill=happy)) + geom_bar(position='dodge') + labs(title="Total Happiness with each marital status", x="Marital Status", fill="Happiness")
 ```
 
+Answer: Using Very Happy and Pretty Happy, it can be found that Married respondents are the most happiest, with separated the lowest that is happy.Using all the happiness per marital status, it can be seen that all marital status have Pretty happy as their highest happiness status. Married respondents are also the ones that have the most not too happy answers.
+
 4. Does party affiliation affect the relationship you found in the last question?
-```{r}
+
+```{r message=FALSE, warning=FALSE}
 newdat %>%
   select(happy, marital, partyid) %>%
   filter(happy %in% c("Pretty happy", "Very happy")) %>%
@@ -96,8 +104,10 @@ newdat %>%
   ggplot(aes(x=marital, fill=happy)) + geom_bar(position='stack') + labs(fill="Happiness") + facet_wrap(~partyid) + coord_flip()
 ```
 
+Answer: Not really, all of the party affiliations have a very high happiness for married respondents. Happy, Married respondents are the highest and have an affilliation for not strong democrat.
+
 5. How is marrital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
-```{r}
+```{r message=FALSE, warning=FALSE}
 newdat %>%
   select(marital, educ) %>%
   mutate(educ=as.numeric(educ)) %>%
@@ -109,10 +119,7 @@ newdat %>%
   select(marital, educ) %>%
   mutate(educ=as.numeric(educ)) %>%
   drop_na() %>%
-  ggplot(aes(marital, educ, fill=marital)) + geom_boxplot()
+  ggplot(aes(marital, educ, fill=marital)) + geom_boxplot() + labs(title="Education Level with Marital Status", x="Marital Status", y="Education Level")
 ```
 
-6. Explore two more interesting questions, and answer those questions using the GSS data.
-```{r}
-
-```
+Answer: While never married has the highest average education level and highest median, if we use boxplot, it can be seen that married respondents actually have a similar distribution of education level with never married respondents. While never married has a similar median of education level with divorced, never married has a much higher 25% quartile compared to divorced, which means that never married respondents have a much higher range of education level than divorced
