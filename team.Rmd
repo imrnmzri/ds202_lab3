@@ -9,16 +9,46 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+Data reading and cleaning. Use GSS and GSS2.
+```{r message=FALSE, warning=FALSE}
+library(readxl)
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+datum <- readxl::read_xls('GSS.xls')
+newdat <- datum %>%
+  rename(year=`Gss year for this respondent`, 
+         marital=`Marital status`, 
+         educ=`Highest year of school completed`, 
+         sex=`Respondents sex`, 
+         partyid=`Political party affiliation`, 
+         happy=`General happiness`, 
+         ballot=`Ballot used for interview`, 
+         id=`Respondent id number`,
+         conpress=`Confidence in press`,
+         bills=`Income alone is enough`,
+         qlife=`R's quality of life`) %>%
+  filter(!educ %in% c("No answer", "Don't know")) %>%
+  filter(!marital %in% c("No answer")) %>%
+  filter(!partyid %in% c("No answer", "Don't know"))
+
+dat <- readxl::read_xls('GSS2.xls')
+dat1<-rename(dat,marital=`Marital status`, educ=`Highest year of school completed`, sex=`Respondents sex`, party=`Political party affiliation`, happy=`General happiness`, fincome=`Total family income`, age=`Age of respondent`)
+dat1<-dat1%>%filter(educ!="No answer")
+dat1<-dat1%>%filter(educ!="Don't know")
+dat1<-dat1%>%filter(marital!="No answer")
+dat1<-dat1%>%filter(party!="No answer")
+dat1<-dat1%>%filter(party!="Don't know")
+```
+
 ## Exploration
 
 Use ggplot2 to create the plots, and dplyr to manipulate the data frame as much as possible. You may want to rename the columns of the data frame for your convenience using rename in dplyr.
 
 1. Find the average years of education for the respondents with each political party affiliation. Arrange your output in a meaningful order and print. Describe any patterns you find.
 ```{r echo = FALSE, message=FALSE, warning=FALSE}
-library(readxl)
-library(ggplot2)
-library(dplyr)
-library(tidyverse)
+
+
 dat <- readxl::read_xls('GSS2.xls')
 dat1<-rename(dat,marital=`Marital status`, educ=`Highest year of school completed`, sex=`Respondents sex`, party=`Political party affiliation`, happy=`General happiness`, fincome=`Total family income`, age=`Age of respondent`)
 dat1<-dat1%>%filter(educ!="No answer")
@@ -40,6 +70,17 @@ EDU
     
 2. Create a single data frame containing records for the better educated respondents in each political party affiliation. A “better educated” respondent is someone who has strictly more years of education than the median in the same party affiliation. Print the structure of the data frame.
 
+```{r message=FALSE, warning=FALSE}
+df1 <- newdat %>%
+  mutate(educ=as.numeric(educ)) %>%
+  group_by(partyid) %>%
+  mutate(median_educ=median(educ, na.rm = TRUE)) %>%
+  filter(educ>median_educ) %>%
+  ungroup()
+
+str(df1)
+```
+
 For each of the investigation below, create at least one numerical summary and one appropriate visualization. Write a paragraph to describe your findings and the variables you used.
 
 3. How is the happiness of a respondent related to his/her marriage status? Define that a person is happy if the response to question is “Very happy” or “Pretty happy”.
@@ -57,6 +98,24 @@ Happiness%>%ggplot(aes(x=marital, fill=happy)) + geom_bar(position='dodge')
     
 4. Does party affiliation affect the relationship you found in the last question?
 
+```{r message=FALSE, warning=FALSE}
+newdat %>%
+  select(happy, marital, partyid) %>%
+  filter(happy %in% c("Pretty happy", "Very happy")) %>%
+  drop_na() %>%
+  group_by(marital, partyid) %>%
+  summarise(nHappy=n()) %>%
+  arrange(desc(nHappy))
+
+newdat %>%
+  select(happy, marital, partyid) %>%
+  filter(happy %in% c("Not too happy", "Pretty happy", "Very happy")) %>%
+  drop_na() %>%
+  ggplot(aes(x=marital, fill=happy)) + geom_bar(position='stack') + labs(fill="Happiness") + facet_wrap(~partyid) + coord_flip()
+```
+
+Answer: Not really, all of the party affiliations have a very high happiness for married respondents. Happy, Married respondents are the highest and have an affilliation for not strong democrat.
+
 5. How is marital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
 
 ```{r echo=FALSE,message=FALSE,warning=FALSE}
@@ -71,3 +130,31 @@ dat3%>%ggplot(aes(educ, marital, fill=marital)) + geom_boxplot()
     In general, from data we can see people who never married have the highest average educarion level. This shows that the higher education level, the harder for people to find a good marriage. Because people with high education level may increase their requirement for marriage.
 
 6. Explore two more interesting questions, and answer those questions using the GSS data.
+
+Question 1: How do party affilliation affects their confidence towards the press, with each sex?
+```{r message=FALSE, warning=FALSE}
+newdat %>%
+  select(sex, conpress, partyid) %>%
+  filter(!conpress %in% c("Not applicable", "No answer")) %>%
+  drop_na() %>%
+  ggplot(aes(x=partyid, fill=conpress)) + geom_bar(position='dodge') + labs(title="Confidence in press with Party Affilliation", x="Party Affilliation", fill="Press Confidence") + facet_wrap(~sex) + coord_flip()
+```
+
+Answer: We can see that almost all of the party affilliation has only some confidence towards the press, but for "Strong Republican" respondents, they are really interesting. Male strong republicans are mostly do not feel confident with the press, while female strong republicans are very close between believing only some press and believing hardly any press. This means that strong republican respondents don't really trust the current news.
+>>>>>>> f27d0524b539aaefedc368b2541007323a22c5c0
+
+Question 2: What is the relationship between respondents' total family income and their happiness?
+```{r echo = FALSE, message=FALSE, warning=FALSE}
+dat1<-dat1%>%filter(fincome!="Not applicable")
+dat1<-dat1%>%filter(fincome!="Refused")
+dat1<-dat1%>%filter(fincome!="No answer")
+dat1<-dat1%>%filter(fincome!="Don't know")
+dat4<-dat1 %>% filter(happy %in% c("Pretty happy", "Very happy","Not too happy"))
+Fincome<-select(dat4,happy,fincome)
+Fincome<-group_by(Fincome,fincome)
+Fincome<-drop_na(Fincome) 
+summarise(Fincome,CountHappy=n(),.groups='drop')
+Fincome%>%ggplot(aes(x=fincome, fill=happy)) + geom_bar(position='dodge')+theme_bw(9)+coord_flip()
+```
+
+    From the data, I found that the total household income of participants in the survey was roughly divided into three areas: $1,000 to $10,000, $10,000 to $25,000 and more than $25,000.Most of those surveyed belonged to high-income families and were mostly happy.It's worth noting that higher income households also reported higher levels of unhappiness than other income groups, suggesting that even as incomes rose, the number of people who said they were unhappy did not decline.
