@@ -4,6 +4,12 @@ author: "Dongming Li"
 date: "9/26/2020"
 output: html_document
 ---
+
+From Imran:
+Issues: 
+Unnecessary dat again in q1 after init before q1
+q5 educ should have as.numeric()
+labels
 ```{r message=FALSE, warning=FALSE}
 library(readxl)
 library(ggplot2)

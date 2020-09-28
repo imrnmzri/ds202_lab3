@@ -109,7 +109,7 @@ newdat %>%
   ggplot(aes(x=marital, fill=happy)) + geom_bar(position='stack') + labs(fill="Happiness", x="Marital Status") + facet_wrap(~partyid) + coord_flip()
 ```
 
-Answer: All of the party affiliations have a very high happiness for married respondents. Happy, Married respondents are the highest and have an affilliation for not strong democrat, followed closely by not strong republicans. However, Not too happy respondents are much more higher in not strong democrat compared to not strong republican. 
+Answer: All of the party affiliations have a very high happiness for married respondents. Happy, Married respondents are the highest and have an affilliation for not strong democrat, followed closely by not strong republicans. However, Not too happy respondents are much more higher in not strong democrat compared to not strong republican. Many unhappy married respondents are affilliated more towards not strong democrat rather than not strong republican or any other party affiliation 
 
 5. How is marrital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
 ```{r message=FALSE, warning=FALSE}
