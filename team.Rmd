@@ -157,4 +157,4 @@ summarise(Fincome,CountHappy=n(),.groups='drop')
 Fincome%>%ggplot(aes(x=fincome, fill=happy)) + geom_bar(position='dodge')+theme_bw(9)+coord_flip()
 ```
 
-    From the data, I found that the total household income of participants in the survey was roughly divided into three areas: $1,000 to $10,000, $10,000 to $25,000 and more than $25,000.Most of those surveyed belonged to high-income families and were mostly happy.It's worth noting that higher income households also reported higher levels of unhappiness than other income groups, suggesting that even as incomes rose, the number of people who said they were unhappy did not decline.
+    From the data, I found that the total household income of participants in the survey was roughly divided into three areas: $1,000 to $10,000, $10,000 to $25,000 and more than $25,000.Most of those surveyed belonged to high-income families and were mostly happy.It's worth noting that higher income households also reported higher levels of unhappiness than other income groups, suggesting that even as incomes rose, people will still feel unhappy. Money is not the only thing can affect the happiness.
