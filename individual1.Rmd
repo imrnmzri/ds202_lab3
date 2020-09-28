@@ -9,6 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+Good analysis and code, thanks for help!
+
 Reading and cleaning data
 ```{r message=FALSE, warning=FALSE}
 library(readxl)
