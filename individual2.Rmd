@@ -10,6 +10,11 @@ Issues:
 Unnecessary dat again in q1 after init before q1
 q5 educ should have as.numeric()
 labels
+
+Update: remove unnecessary dat in q1
+q5 educ does not need as.numeric() cause It has already been numeric in q1: dat1 <- dat1 %>% mutate(educ=as.numeric(educ))
+add labels
+
 ```{r message=FALSE, warning=FALSE}
 library(readxl)
 library(ggplot2)
@@ -48,16 +53,6 @@ Use ggplot2 to create the plots, and dplyr to manipulate the data frame as much 
 
 1. Find the average years of education for the respondents with each political party affiliation. Arrange your output in a meaningful order and print. Describe any patterns you find.
 ```{r echo = FALSE, message=FALSE, warning=FALSE}
-
-
-dat <- readxl::read_xls('GSS2.xls')
-dat1<-rename(dat,marital=`Marital status`, educ=`Highest year of school completed`, sex=`Respondents sex`, party=`Political party affiliation`, happy=`General happiness`, fincome=`Total family income`, age=`Age of respondent`)
-dat1<-dat1%>%filter(educ!="No answer")
-dat1<-dat1%>%filter(educ!="Don't know")
-dat1<-dat1%>%filter(marital!="No answer")
-dat1<-dat1%>%filter(party!="No answer")
-dat1<-dat1%>%filter(party!="Don't know")
-
 
 dat1 <- dat1 %>% mutate(educ=as.numeric(educ))
 EDU<-select(dat1,educ, party)
@@ -121,7 +116,7 @@ dat3<-group_by(dat3,marital)
 dat3<-drop_na(dat3)
 Summary<-dat3%>%summarise(AVEedu=mean(educ))
 Summary
-dat3%>%ggplot(aes(educ, marital, fill=marital)) + geom_boxplot()
+dat3%>%ggplot(aes(educ, marital, fill=marital)) + geom_boxplot()+labs(title="Education Level with Marital Status", x="Marital Status", y="Education Level")
 ```
 
     In general, from data we can see people who never married have the highest average educarion level. This shows that the higher education level, the harder for people to find a good marriage. Because people with high education level may increase their requirement for marriage.

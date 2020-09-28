@@ -41,6 +41,7 @@ dat1<-dat1%>%filter(party!="No answer")
 dat1<-dat1%>%filter(party!="Don't know")
 
 #Imran: Unable to combine GSS files because of conflicts in q6, q6.1 has variables that are not in q6.2 and vice versa
+#Dongming: I think we don't need to combine them, we can just use our own data or use partner's data directly.
 ```
 
 ## Exploration
@@ -50,14 +51,8 @@ Use ggplot2 to create the plots, and dplyr to manipulate the data frame as much 
 1. Find the average years of education for the respondents with each political party affiliation. Arrange your output in a meaningful order and print. Describe any patterns you find.
 ```{r echo = FALSE, message=FALSE, warning=FALSE}
 
-#Imran: unnecessary
-#dat <- readxl::read_xls('GSS2.xls')
-#dat1<-rename(dat,marital=`Marital status`, educ=`Highest year of school completed`, sex=`Respondents sex`, party=`Political party affiliation`, happy=`General happiness`, fincome=`Total family income`, age=`Age of respondent`)
-#dat1<-dat1%>%filter(educ!="No answer")
-#dat1<-dat1%>%filter(educ!="Don't know")
-#dat1<-dat1%>%filter(marital!="No answer")
-#dat1<-dat1%>%filter(party!="No answer")
-#dat1<-dat1%>%filter(party!="Don't know")
+#Imran: unnecessary date here
+#Dongming: update: remove repeated data
 
 
 dat1 <- dat1 %>% mutate(educ=as.numeric(educ))
@@ -124,7 +119,7 @@ newdat %>%
   ggplot(aes(x=marital, fill=happy)) + geom_bar(position='stack') + labs(fill="Happiness", x="Marital Status") + facet_wrap(~partyid) + coord_flip()
 ```
 
-Answer: All of the party affiliations have a very high happiness for married respondents. Happy, Married respondents are the highest and have an affilliation for not strong democrat, followed closely by not strong republicans. However, Not too happy respondents are much more higher in not strong democrat compared to not strong republican. Many unhappy married respondents are affilliated more towards not strong democrat rather than not strong republican or any other party affiliation
+Answer: All of the party affiliations have a very high happiness for married respondents. Happy, Married respondents are the highest and have an affiliation for not strong democrat, followed closely by not strong republicans. However, Not too happy respondents are much more higher in not strong democrat compared to not strong republican. Many unhappy married respondents are affiliated more towards not strong democrat rather than not strong republican or any other party affiliation
 
 5. How is marital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
 
@@ -133,9 +128,10 @@ dat3<-select(dat1,educ,marital)
 dat3<-group_by(dat3,marital)
 dat3<-drop_na(dat3)
 #Imran; adding asnumeric in educ
-Summary<-dat3%>%summarise(AVEedu=mean(as.numeric(educ)))
+#Dongming: unnecessary to add asnumeric here cause i have already changed it in q1.
+Summary<-dat3%>%summarise(AVEedu=mean(educ))
 Summary
-dat3%>%ggplot(aes(educ, marital, fill=marital)) + geom_boxplot() + labs(title="Education Level with Marital Status", x="Marital Status", y="Education Level")
+dat3%>%ggplot(aes(educ, marital, fill=marital)) + geom_boxplot()+labs(title="Education Level with Marital Status", x="Marital Status", y="Education Level")
 ```
 
     While never married has the highest average education level and highest median, if we use boxplot, it can be seen that married respondents actually have a similar distribution of education level with never married respondents. While never married has a similar median of education level with divorced, never married has a much higher 25% quartile compared to divorced, which means that never married respondents have a much higher range of education level than divorced, which is highly concentrated around level 12 to 15. In general, from data we can see people who never married have the highest average education level. This shows that the higher education level, the harder for people to find a good marriage. Because people with high education level may increase their requirement for marriage.
@@ -155,7 +151,6 @@ Answer: We can see that almost all of the party affilliation has only some confi
 
 Question 2: What is the relationship between respondents' total family income and their happiness?
 ```{r echo = FALSE, message=FALSE, warning=FALSE}
-#>>>>>>> f27d0524b539aaefedc368b2541007323a22c5c0 idk what this is and why is this here-Imran
 dat1<-dat1%>%filter(fincome!="Not applicable")
 dat1<-dat1%>%filter(fincome!="Refused")
 dat1<-dat1%>%filter(fincome!="No answer")
